@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\CheckModuleActive;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,5 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Gérer les erreurs d'authentification et retourner du JSON
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
+            return response()->json([
+                'message' => 'Unauthenticated.'
+            ], 401);
+        });
     })->create();
